@@ -44,29 +44,28 @@ router.get('/account/list', isLoggedIn, async (ctx) => {
   //   ctx.body = COMMON_ERROR_RES.ACCESS_DENY
   //   return
   // }
-  let where = {}
+
   let { name } = ctx.query
-  if (name) {
-    Object.assign(where, {
-      [Op.or]: [
-        { fullname: { [Op.like]: `%${name}%` } },
-        { email: name },
-      ],
-    })
-  }
-  let options = { where }
-  let total = await User.count(options)
+  let where: any = name ? {
+    [Op.or]: [
+      { fullname: { [Op.like]: `%${name}%` } },
+      { email: name },
+    ],
+  } : {}
+
+  let total = await User.count(where)
   let limit = Math.min(ctx.query.limit ?? 10, 100)
   let pagination = new Pagination(total, ctx.query.cursor || 1, limit)
   ctx.body = {
-    data: await User.findAll(Object.assign(options, {
+    data: await User.findAll({
+      where,
       attributes: ['id', 'fullname', 'email'],
       offset: pagination.start,
       limit: pagination.limit,
       order: [
         ['id', 'DESC'],
       ],
-    })),
+    }),
     pagination: pagination,
   }
 })
