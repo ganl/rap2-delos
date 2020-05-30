@@ -1,9 +1,10 @@
-import { IConfigOptions } from "../types"
+import { IConfigOptions } from '../types'
 
-let config: IConfigOptions = {
-  version: '2.3',
+const config: IConfigOptions = {
+  version: 'v2.9.0',
   serve: {
-    port: 8080,
+    port: (process.env.SERVE_PORT && parseInt(process.env.SERVE_PORT)) || 8080,
+    path: '',
   },
   keys: ['some secret hurr'],
   session: {
@@ -11,31 +12,32 @@ let config: IConfigOptions = {
   },
   db: {
     dialect: 'mysql',
-    host: 'localhost',
-    port: 3306,
-    username: 'root',
-    password: '',
-    database: 'RAP2_DELOS_APP',
+    host: process.env.MYSQL_URL ?? 'localhost',
+    port: (process.env.MYSQL_PORT && parseInt(process.env.MYSQL_PORT)) || 3306,
+    username: process.env.MYSQL_USERNAME ?? 'root',
+    password: process.env.MYSQL_PASSWD ?? '',
+    database: process.env.MYSQL_SCHEMA ?? 'RAP2_DELOS_APP',
     pool: {
-      max: 5,
+      max: 10,
       min: 0,
       idle: 10000,
     },
     logging: false,
+    dialectOptions: {
+      connectTimeout: 20000,
+    },
   },
   redis: {},
   mail: {
-    host: 'smtp-mail.outlook.com',
-    port: 587,
-    secure: false,
+    host: process.env.MAIL_HOST ?? 'smtp.aliyun.com',
+    port: process.env.MAIL_PORT ?? 465,
+    secure: process.env.MAIL_SECURE ?? true,
     auth: {
-      user: 'rap2_notify@outlook.com',
-      pass: ''
-    }
+      user: process.env.MAIL_USER ?? 'rap2org@service.alibaba.com',
+      pass: process.env.MAIL_PASS ?? '',
+    },
   },
-  mailSender: 'rap2_notify@outlook.com',
-
-
+  mailSender: process.env.MAIL_SENDER ?? 'rap2org@service.alibaba.com',
 }
 
 export default config
