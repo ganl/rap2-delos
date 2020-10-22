@@ -1,5 +1,6 @@
 import router from './router'
 
+require('./special')
 require('./counter')
 require('./account')
 require('./organization')
